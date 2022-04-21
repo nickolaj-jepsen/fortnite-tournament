@@ -2,20 +2,26 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 model Player {
-  id        Int      @id @default(autoincrement())
-  name      String
-  accountId   String   @unique
-  displayName String?
-  tournaments Tournament[]
+  id            Int        @id @default(autoincrement())
+  name          String
+  accountId     String
+  displayName   String?
+  tournament    Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId  Int
+  initialScore  Json?
+  lastScore     Json?
 }
 
 model Tournament {
