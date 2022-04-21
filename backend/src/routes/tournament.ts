@@ -1,11 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
+import { mergeWith } from "lodash";
 
-import { getStats } from "../api/fortnite";
-import { statsCache } from "../cache";
-import { isDefined } from "../util/isUndefined";
-import { sleep } from "../util/sleep";
-import player from "./player";
+import { calculateScore, diffStats, Stats } from "../api/fortnite";
 
 const prisma = new PrismaClient();
 
@@ -42,19 +39,15 @@ tournamentRouter.get("/api/tournament/:id/leaderboard", async (req, res) => {
 
   const result: LeaderboardScore[] = [];
   for (const player of tournament.players) {
-    const cacheKey = `stats-${tournament.id}-${player.id}`;
-    let score = await statsCache.getItem<number>(cacheKey);
-
-    if (!score) {
-      score = await getStats(
-        player.accountId,
-        tournament.startTime ?? undefined,
-        tournament.endTime ?? undefined
+    let score = 0;
+    if (player.initialScore && player.lastScore) {
+      const diffed = diffStats(
+        player.initialScore as Stats,
+        player.lastScore as Stats
       );
-      await statsCache.setItem(cacheKey, score, { ttl: 300 });
-      await sleep(500); // Seems epic rate-limit the api endpoint, so we wait
-    }
 
+      score = calculateScore(diffed);
+    }
     result.push({
       score: score,
       id: player.id,
@@ -122,24 +115,13 @@ tournamentRouter.post("/api/tournament/:id/player", async (req, res) => {
     return;
   }
 
-  const player = await prisma.player.upsert({
-    where: {
-      accountId: id,
-    },
-    update: {
-      name: name,
-      displayName: displayName,
-    },
-    create: {
+  const player = await prisma.player.create({
+    data: {
       accountId: id,
       name: name,
       displayName: displayName,
+      tournamentId: tournament.id,
     },
-  });
-
-  await prisma.player.update({
-    where: { id: player.id },
-    data: { tournaments: { connect: { id: tournament.id } } },
   });
 
   res.send(player);
