@@ -17,4 +17,7 @@ RUN npx prisma generate
 RUN npm run build
 
 ENV SERVE_DIR=/frontend
+
+EXPOSE 5000
+
 CMD node build/src/index.js
