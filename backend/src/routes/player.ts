@@ -10,6 +10,7 @@ playerRouter.post("/api/player-search", async (req, res) => {
   try {
     res.send(await client.searchProfiles(search));
   } catch (error) {
+    console.error(error);
     res.status(500);
     res.send({ status: "error" });
   }
