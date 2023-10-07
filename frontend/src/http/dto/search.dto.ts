@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const SearchEntryValidator = z.object({
-  _displayName: z.string(),
+  _displayName: z.string().optional().default(""),
   id: z.string(),
   externalAuths: z
     .record(
@@ -10,7 +10,7 @@ export const SearchEntryValidator = z.object({
         type: z.string(),
         externalDisplayName: z.string().nullish(),
         externalAuthId: z.string().nullish(),
-      })
+      }),
     )
     .optional(),
 });

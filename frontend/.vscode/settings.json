@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": true
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "CockroachDB",
+            "name": "fortnite",
+            "connectString": "postgresql://nickolaj:ZQq8O5bJ6VNcJ_LdtNsd3w@fortnite-tournament-7977.7tc.cockroachlabs.cloud:26257/defaultdb"
+        }
+    ]
+}

@@ -1,4 +1,3 @@
-import { DateTimePicker } from "@mui/lab";
 import {
   Button,
   Container,
@@ -14,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import React, {
   FunctionComponent,
   useCallback,
@@ -48,12 +48,15 @@ const TournamentRoute: FunctionComponent = () => {
     },
   });
 
-  const { data: tournament } = useQuery(["tournaments", id], () =>
-    fetchTournament(id)
-  );
-  const { data: players } = useQuery(["tournaments-players", id], () =>
-    fetchTournamentPlayers(id)
-  );
+  const { data: tournament } = useQuery({
+    queryKey: ["tournaments", id],
+    queryFn: () => (id ? fetchTournament(id) : undefined),
+  });
+
+  const { data: players } = useQuery({
+    queryKey: ["tournaments-players", id],
+    queryFn: () => (id ? fetchTournamentPlayers(id) : undefined),
+  });
 
   useEffect(() => {
     setFromDate(tournament?.startTime ? new Date(tournament.startTime) : null);
@@ -63,9 +66,10 @@ const TournamentRoute: FunctionComponent = () => {
   const addPlayer = (accountId: string, name: string, displayName: string) => {
     if (name === "") {
       alert("Empty name");
+      return;
     }
     playerMutation.mutateAsync({
-      tournamentId: id,
+      tournamentId: id ?? "",
       displayName,
       accountId,
       name,
@@ -74,7 +78,7 @@ const TournamentRoute: FunctionComponent = () => {
 
   const updateTime = () =>
     tournamentMutation.mutateAsync({
-      tournamentId: id,
+      tournamentId: id ?? "",
       startTime: fromDate ?? undefined,
       endTime: toDate ?? undefined,
     });
@@ -88,14 +92,12 @@ const TournamentRoute: FunctionComponent = () => {
       </Typography>
       <Stack direction={"row"} spacing={2}>
         <DateTimePicker
-          renderInput={(props) => <TextField {...props} />}
           label="From"
           value={fromDate}
           ampm={false}
           onChange={setFromDate}
         />
         <DateTimePicker
-          renderInput={(props) => <TextField {...props} />}
           label="To"
           value={toDate}
           ampm={false}

@@ -2,19 +2,16 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider             = "mysql"
+  provider             = "cockroachdb"
   url                  = env("DATABASE_URL")
-  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
-  referentialIntegrity = "prisma"
 }
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
 }
 
 model Player {
-  id            Int        @id @default(autoincrement())
+  id            Int        @id @default(sequence())
   name          String
   accountId     String
   displayName   String?
@@ -22,12 +19,21 @@ model Player {
   tournamentId  Int
   initialScore  Json?
   lastScore     Json?
+  scores        Score[]
 }
 
 model Tournament {
-  id        Int      @id @default(autoincrement())
+  id        Int      @id @default(sequence())
   name      String
   startTime DateTime?
   endTime   DateTime?
   players   Player[]
+}
+
+model Score {
+  id           Int        @id @default(sequence())
+  data         Json
+  player       Player     @relation(fields: [playerId], references: [id])
+  playerId     Int
+  createdAt    DateTime   @default(now()) @db.Timestamptz(6)
 }

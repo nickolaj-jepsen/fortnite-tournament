@@ -1,11 +1,11 @@
-FROM node:16 as frontend
+FROM node:20 as frontend
 WORKDIR /usr/src/app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install -ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM node:16
+FROM node:20
 WORKDIR /app
 COPY backend/package.json backend/package-lock.json ./
 RUN npm install -ci

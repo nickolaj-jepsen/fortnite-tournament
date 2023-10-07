@@ -1,30 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any*/
-import { Client } from "fnbr";
+import { Client, StatsData } from "fnbr";
 import { mergeWith } from "lodash";
 
 const input = ["gamepad", "keyboardmouse"];
 
 let queues: { [key: string]: { [key: string]: number } } = {
-  defaultsolo: { placetop25: 20, placetop10: 20, placetop1: 60, kills: 20 },
-  defaultduo: { placetop12: 10, placetop5: 20, placetop1: 30, kills: 20 },
-  trios: { placetop6: 10, placetop3: 20, placetop1: 25, kills: 20 },
-  defaultsquad: { placetop6: 5, placetop3: 10, placetop1: 20, kills: 20 },
+  solo: { top25: 20, top10: 20, win: 60, kills: 20 },
+  duo: { top12: 10, top5: 20, win: 30, kills: 20 },
+  trios: { top6: 10, top3: 20, win: 25, kills: 20 },
+  squad: { top6: 5, top3: 10, win: 20, kills: 20 },
 };
 
-if (process.env.ENABLE_NO_BUILD) {
-  queues = {
-    ...queues,
-    nobuildbr_solo: {
-      placetop25: 20,
-      placetop10: 20,
-      placetop1: 60,
-      kills: 20,
-    },
-    nobuildbr_duo: { placetop12: 10, placetop5: 20, placetop1: 30, kills: 20 },
-    nobuildbr_trio: { placetop6: 10, placetop3: 20, placetop1: 25, kills: 20 },
-    nobuildbr_squad: { placetop6: 5, placetop3: 10, placetop1: 20, kills: 20 },
-  };
-}
 const buildStatsQuery = () => {
   const stats = [];
   for (const i of input) {
@@ -38,7 +24,7 @@ const buildStatsQuery = () => {
 };
 
 const authCode = JSON.parse(
-  Buffer.from(process.env.AUTH ?? "", "base64").toString()
+  Buffer.from(process.env.AUTH ?? "", "base64").toString(),
 );
 
 (global as any)._fnbrClient = undefined;
@@ -56,17 +42,10 @@ export const getClient = async (): Promise<Client> => {
 
 export type Stats = { [key: string]: { [key: string]: number } };
 
-const parseStats = (data: { [key: string]: string }) => {
+const parseStats = (data: StatsData): Stats => {
   const stats: Stats = {};
-  for (const [statName, value] of Object.entries(data)) {
-    const parts = statName.split("_");
-
-    const name = parts[1];
-    const playlist = parts.slice(5, parts.length).join("_");
-    if (!(playlist in stats)) {
-      stats[playlist] = {};
-    }
-    stats[playlist][name] = parseInt(value, 10);
+  for (const [playlist, value] of Object.entries(data.all)) {
+    stats[playlist] = value
   }
   return stats;
 };

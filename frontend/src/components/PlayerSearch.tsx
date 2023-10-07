@@ -30,7 +30,7 @@ const PlayerSearch: FunctionComponent<IPlayerSearchProps> = ({ onSelect }) => {
     () => searchUser(search ?? ""),
     {
       enabled: !!search,
-    }
+    },
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -93,7 +93,7 @@ const PlayerSearch: FunctionComponent<IPlayerSearchProps> = ({ onSelect }) => {
                                 external.externalAuthId
                               }`}
                             />
-                          )
+                          ),
                         )}
                       </Stack>
                     </TableCell>

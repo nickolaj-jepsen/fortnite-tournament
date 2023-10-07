@@ -21,7 +21,7 @@ export async function fetchTournaments(): Promise<TournamentList> {
 }
 
 export async function fetchTournament(
-  id: number | string
+  id: number | string,
 ): Promise<Tournament> {
   const data = await fetch(`/api/tournament/${id}`);
   const json = await data.json();
@@ -29,7 +29,7 @@ export async function fetchTournament(
 }
 
 export async function fetchTournamentPlayers(
-  id: number | string
+  id: number | string,
 ): Promise<PlayerList> {
   const data = await fetch(`/api/tournament/${id}/players`);
   const json = await data.json();
@@ -56,7 +56,7 @@ export interface AddPlayerData {
 }
 
 export async function addPlayerToTournament(
-  newPlayer: AddPlayerData
+  newPlayer: AddPlayerData,
 ): Promise<Player> {
   const data = await fetch(`/api/tournament/${newPlayer.tournamentId}/player`, {
     method: "POST",
@@ -80,7 +80,7 @@ export interface UpdateTournamentTimeData {
 }
 
 export async function updateTournamentTime(
-  newTime: UpdateTournamentTimeData
+  newTime: UpdateTournamentTimeData,
 ): Promise<Tournament> {
   const data = await fetch(`/api/tournament/${newTime.tournamentId}/time`, {
     method: "POST",
@@ -97,7 +97,7 @@ export async function updateTournamentTime(
 }
 
 export async function fetchLeaderboard(
-  tournamentId: number | string
+  tournamentId: number | string,
 ): Promise<LeaderboardScoreList> {
   const data = await fetch(`/api/tournament/${tournamentId}/leaderboard`);
   const json = await data.json();

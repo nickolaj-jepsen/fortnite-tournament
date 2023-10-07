@@ -20,14 +20,15 @@ import { fetchLeaderboard } from "../http/tournament.http";
 const LeaderboardRoute: FunctionComponent = (props) => {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
-  const { data: leaderboard, isLoading } = useQuery(["leaderboard", id], () =>
-    fetchLeaderboard(id)
-  );
+  const { data: leaderboard, isLoading } = useQuery({
+    queryKey: ["leaderboard", id],
+    queryFn: () => (id ? fetchLeaderboard(id) : []),
+  });
 
   useEffect(() => {
     const interval = setInterval(
       () => queryClient.invalidateQueries(["leaderboard", id]),
-      1000 * 60
+      1000 * 60,
     );
     return () => {
       clearInterval(interval);

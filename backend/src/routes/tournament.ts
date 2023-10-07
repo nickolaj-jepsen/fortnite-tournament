@@ -16,7 +16,7 @@ tournamentRouter.get("/api/tournament/:id", async (req, res) => {
   res.send(
     await prisma.tournament.findFirst({
       where: { id: parseInt(req.params.id, 10) },
-    })
+    }),
   );
 });
 
@@ -43,7 +43,7 @@ tournamentRouter.get("/api/tournament/:id/leaderboard", async (req, res) => {
     if (player.initialScore && player.lastScore) {
       const diffed = diffStats(
         player.initialScore as Stats,
-        player.lastScore as Stats
+        player.lastScore as Stats,
       );
 
       score = calculateScore(diffed);

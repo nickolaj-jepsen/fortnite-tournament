@@ -21,6 +21,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 11,
     sourceType: "module",
+    project: true,
     tsconfigRootDir: __dirname,
   },
   plugins: [
@@ -172,6 +173,15 @@ module.exports = {
      */
   },
   overrides: [
+    {
+      files: [".eslintrc.js"],
+      extends: ["plugin:@typescript-eslint/disable-type-checked"],
+      env: {
+        jest: true,
+        node: true,
+        browser: true,
+      },
+    },
     {
       files: ["*.test.ts", "*.test.tsx"],
       env: {
