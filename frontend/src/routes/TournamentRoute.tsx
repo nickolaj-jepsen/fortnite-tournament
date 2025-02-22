@@ -128,7 +128,13 @@ const TournamentRoute: FunctionComponent = () => {
               >
                 <TableCell>{player.name}</TableCell>
                 <TableCell>{player.displayName}</TableCell>
-                <TableCell>{player.accountId}</TableCell>
+                <TableCell>
+                  <a
+                    href={`https://fortnitetracker.com/profile/all/${player.accountId}/matches`}
+                  >
+                    {player.accountId}
+                  </a>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
