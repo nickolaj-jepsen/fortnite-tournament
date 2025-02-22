@@ -8,7 +8,7 @@ playerRouter.post("/api/player-search", async (req, res) => {
   const search: string = req.body["search"];
   const client = await getClient();
   try {
-    res.send(await client.searchProfiles(search));
+    res.send(await client.user.search(search));
   } catch (error) {
     console.error(error);
     res.status(500);
